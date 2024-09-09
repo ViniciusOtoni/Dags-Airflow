@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  airflow-db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  airflow-webserver:
+    image: apache/airflow:2.6.2-python3.10
+    entrypoint: /bin/bash -c "airflow db init && airflow users create --username admin --password admin --firstname Vini --lastname Otoni --email viniciusotonimvs@gmail.com --role Admin || true && airflow webserver"
+    ports:
+      - "8080:8080"
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+    depends_on:
+      - airflow-db
+      
+volumes:
+  postgres-data:
+    driver: local
