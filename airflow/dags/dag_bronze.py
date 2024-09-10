@@ -2,20 +2,15 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
 from datetime import timedelta
-import sys
 
 
-sys.path.insert(0, '/opt/airflow/ETL/bronze')
 
-
-# Importe o módulo
-from main import BronzeETL
 
 def bronze_processing():
-    path_df = '/opt/airflow/data/d01_raw/movies_complete.csv'  
-    output_dir = '/opt/airflow/data/d02_bronze/'  
+    path_df = '/opt/airflow/data/d01_raw/movies_complete.csv'
+    output_dir = '/opt/airflow/data/d02_bronze/'
     file_name = 'movies_complete_bronze.csv'
-    
+
     etl = BronzeETL(path_df, output_dir, file_name)
 
 default_args = {
@@ -24,7 +19,7 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': timedelta(minutes=1),
 }
 
 with DAG(

@@ -1,0 +1,64 @@
+version: '3.8'
+services:
+  airflow-db:
+    image: postgres:13
+    container_name: airflow-db
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 10s
+      retries: 5
+
+  airflow-init:
+    image: apache/airflow:2.6.2-python3.10
+    container_name: airflow-init
+    entrypoint: /bin/bash -c "airflow db reset --yes && airflow db init && airflow users create --username vini --password admin --firstname Vini --lastname Otoni --email viniciusotonimvs@gmail.com --role Admin"
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
+    depends_on:
+      airflow-db:
+        condition: service_healthy
+
+  airflow-webserver:
+    image: apache/airflow:2.6.2-python3.10
+    container_name: airflow-webserver
+    entrypoint: /bin/bash -c "pip install -r /airflow/requirements.txt && airflow webserver"
+    ports:
+      - "8080:8080"
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+    volumes:
+      - ./airflow/dags:/airflow/dags
+      - ./airflow/data:/airflow/data
+      - ./ETL/bronze:/airflow/ETL/bronze
+      - ./airflow/requirements.txt:/airflow/requirements.txt
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+      airflow-db:
+        condition: service_healthy
+
+  airflow-scheduler:
+    image: apache/airflow:2.6.2-python3.10
+    container_name: airflow-scheduler
+    entrypoint: /bin/bash -c "airflow scheduler"
+    depends_on:
+      airflow-webserver:
+        condition: service_started
+      airflow-db:
+        condition: service_healthy
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
+
+volumes:
+  postgres-data:
+    driver: local
