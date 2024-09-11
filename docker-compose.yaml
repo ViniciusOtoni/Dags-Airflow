@@ -13,6 +13,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U airflow"]
       interval: 10s
       retries: 5
+      start_period: 30s
 
   airflow-webserver:
     image: apache/airflow:2.6.2-python3.10
@@ -23,22 +24,29 @@ services:
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
+      - PYTHONPATH=/opt/airflow/ETL
     volumes:
       - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/data:/opt/airflow/data
+      - ./data:/opt/airflow/data
       - ./ETL/bronze:/opt/airflow/ETL/bronze
       - ./airflow/requirements.txt:/opt/airflow/requirements.txt
-    depends_on:
-      airflow-db:
-        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/ || exit 1"]
+      interval: 45s
+      retries: 2
 
   airflow-scheduler:
     image: apache/airflow:2.6.2-python3.10
     container_name: airflow-scheduler
-    entrypoint: /bin/bash -c "airflow scheduler"
+    entrypoint: ["airflow", "scheduler"]
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+      - ./ETL/bronze:/opt/airflow/ETL/bronze
+      - ./airflow/requirements.txt:/opt/airflow/requirements.txt
     depends_on:
       airflow-webserver:
-        condition: service_completed_successfully
+        condition: service_healthy
       airflow-db:
         condition: service_healthy
     environment:
