@@ -13,6 +13,7 @@ class SilverETL:
         
         self.df = self.cleaningBudget(self.df)
         self.df = self.cleaningRevenue(self.df)
+        self.df = self.cleaningVoteCount(self.df)
         self.df = self.applyCastSize(self.df)
 
         self.output_dir = output_dir
@@ -34,7 +35,6 @@ class SilverETL:
 
         df["Movie_Budget"] = pd.to_numeric(df["Movie_Budget"], errors="coerce")
         df["Movie_Budget"].fillna(0)
-        df["Movie_Budget"] = df["Movie_Budget"].div(100000)
 
         return df
 
@@ -42,10 +42,15 @@ class SilverETL:
         
         df["Movie_Revenue"] = pd.to_numeric(df["Movie_Revenue"], errors="coerce")
         df["Movie_Revenue"].fillna(0)
-        df["Movie_Revenue"] = df["Movie_Revenue"].div(100000)
 
         return df
 
+    def cleaningVoteCount(self, df):
+        
+        df["Movie_Vote_Count"] = pd.to_numeric(df["Movie_Vote_Count"], errors="coerce")
+        df["Movie_Vote_Count"].fillna(0)
+
+        return df
     
     def applyCastSize(self, df):
 
