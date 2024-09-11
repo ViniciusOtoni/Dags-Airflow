@@ -2,7 +2,7 @@
 
 Este repositório contém a implementação de pipelines de dados utilizando o **Apache Airflow** em um ambiente Docker, seguindo a arquitetura Medallion (Bronze, Silver, Gold). Esse projeto foi desenvolvido para demonstrar como criar e gerenciar pipelines ETL de forma eficiente, escalável e organizada com o Airflow!
 
-![Airflow Logo](https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Apache-airflow-logo.png/1920px-Apache-airflow-logo.png)
+![Airflow Logo](https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.anselme.com.br%2F2023%2F08%2F09%2Fo-basico-de-apache-airflow%2F&psig=AOvVaw2s8BY1tLpFIWk2XJ5jR5qq&ust=1726179897253000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCOjo96_3u4gDFQAAAAAdAAAAABAE)
 
 ---
 
