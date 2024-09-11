@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 sys.path.append('/opt/airflow/ETL/gold')
-from main import GoldETL
+from main_gd import GoldETL
 
 def gold_processing():
     try:

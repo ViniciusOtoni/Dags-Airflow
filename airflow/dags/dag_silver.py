@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 sys.path.append('/opt/airflow/ETL/silver')
 
-from main import SilverETL
+from main_sl import SilverETL
 
 def silver_processing():
     try:

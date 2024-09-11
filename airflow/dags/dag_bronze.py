@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 sys.path.append('/opt/airflow/ETL/bronze')
 
-from main import BronzeETL
+from main_br import BronzeETL
 
 def bronze_processing():
     try:
