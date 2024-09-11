@@ -29,6 +29,8 @@ services:
       - ./airflow/dags:/opt/airflow/dags
       - ./data:/opt/airflow/data
       - ./ETL/bronze:/opt/airflow/ETL/bronze
+      - ./ETL/silver:/opt/airflow/ETL/silver
+      - ./ETL/gold:/opt/airflow/ETL/gold
       - ./airflow/requirements.txt:/opt/airflow/requirements.txt
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/ || exit 1"]
@@ -43,6 +45,8 @@ services:
       - ./airflow/dags:/opt/airflow/dags
       - ./data:/opt/airflow/data
       - ./ETL/bronze:/opt/airflow/ETL/bronze
+      - ./ETL/silver:/opt/airflow/ETL/silver
+      - ./ETL/gold:/opt/airflow/ETL/gold
       - ./airflow/requirements.txt:/opt/airflow/requirements.txt
     depends_on:
       airflow-webserver:
